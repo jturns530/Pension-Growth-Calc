@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<!-- saved from url=(0070)file:///Users/jacquesturner/Downloads/pension_calculator_github_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pension Growth Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            padding: 2rem;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+        
+        .subtitle {
+            font-size: 15px;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .summary-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 2rem;
+        }
+        
+        .scenario-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+        
+        .scenario-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .scenario-card.featured {
+            border: 2px solid #3b82f6;
+        }
+        
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .color-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .scenario-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .scenario-rate {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .scenario-value {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        
+        .scenario-growth {
+            font-size: 12px;
+            color: #059669;
+            margin-top: 8px;
+        }
+        
+        .chart-container {
+            margin: 2rem 0;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        #growthChart {
+            width: 100%;
+            height: 400px;
+        }
+        
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 1rem;
+            font-size: 13px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .legend-line {
+            width: 24px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        
+        .controls-section {
+            margin: 2rem 0 1rem;
+        }
+        
+        .controls-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .control-label {
+            font-size: 13px;
+            color: #6b7280;
+            min-width: 160px;
+        }
+        
+        .control-slider {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: #e5e7eb;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+        }
+        
+        .control-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .control-value {
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 90px;
+            text-align: right;
+            color: #1a1a1a;
+        }
+        
+        .disclaimer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #78350f;
+            line-height: 1.6;
+        }
+        
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pension Growth Calculator</h1>
+        <p class="subtitle">Project your pension pot value across different investment scenarios</p>
+        
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Starting pot</div>
+                <div class="summary-value" id="display-starting">£500,000</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Monthly contribution</div>
+                <div class="summary-value" id="display-contribution">£1,000</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Time horizon</div>
+                <div class="summary-value" id="display-years">20 years</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total invested</div>
+                <div class="summary-value" id="display-total-invested">£740,000</div>
+            </div>
+        </div>
+
+        <div class="scenarios-grid">
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <div class="color-dot" style="background: #85B7EB;"></div>
+                    <div class="scenario-name">Conservative</div>
+                </div>
+                <div class="scenario-rate">3% annual return</div>
+                <div class="scenario-value" id="conservative-value">£1,238,679</div>
+                <div class="scenario-growth" id="conservative-growth">+£498,679 growth</div>
+            </div>
+
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <div class="color-dot" style="background: #97C459;"></div>
+                    <div class="scenario-name">Moderate</div>
+                </div>
+                <div class="scenario-rate">5% annual return</div>
+                <div class="scenario-value" id="moderate-value">£1,767,354</div>
+                <div class="scenario-growth" id="moderate-growth">+£1,027,354 growth</div>
+            </div>
+
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <div class="color-dot" style="background: #EF9F27;"></div>
+                    <div class="scenario-name">Balanced</div>
+                </div>
+                <div class="scenario-rate">7% annual return</div>
+                <div class="scenario-value" id="balanced-value">£2,540,296</div>
+                <div class="scenario-growth" id="balanced-growth">+£1,800,296 growth</div>
+            </div>
+
+            <div class="scenario-card featured">
+                <div class="scenario-header">
+                    <div class="color-dot" style="background: #7F77DD;"></div>
+                    <div class="scenario-name">Growth</div>
+                </div>
+                <div class="badge">Historical UK average</div>
+                <div class="scenario-rate">9% annual return</div>
+                <div class="scenario-value" id="growth-value">£3,672,463</div>
+                <div class="scenario-growth" id="growth-growth">+£2,932,463 growth</div>
+            </div>
+
+            <div class="scenario-card">
+                <div class="scenario-header">
+                    <div class="color-dot" style="background: #F09595;"></div>
+                    <div class="scenario-name">Aggressive</div>
+                </div>
+                <div class="scenario-rate">11% annual return</div>
+                <div class="scenario-value" id="aggressive-value">£5,333,146</div>
+                <div class="scenario-growth" id="aggressive-growth">+£4,593,146 growth</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <svg id="growthChart" viewBox="0 0 1086 400"><line x1="70" y1="350" x2="1066" y2="350" stroke="#e5e7eb" stroke-width="1"></line><text x="60" y="354" text-anchor="end" font-size="12" fill="#6b7280">£500k</text><line x1="70" y1="284" x2="1066" y2="284" stroke="#e5e7eb" stroke-width="1"></line><text x="60" y="288" text-anchor="end" font-size="12" fill="#6b7280">£1.5M</text><line x1="70" y1="217.99999999999997" x2="1066" y2="217.99999999999997" stroke="#e5e7eb" stroke-width="1"></line><text x="60" y="221.99999999999997" text-anchor="end" font-size="12" fill="#6b7280">£2.4M</text><line x1="70" y1="152" x2="1066" y2="152" stroke="#e5e7eb" stroke-width="1"></line><text x="60" y="156" text-anchor="end" font-size="12" fill="#6b7280">£3.4M</text><line x1="70" y1="85.99999999999994" x2="1066" y2="85.99999999999994" stroke="#e5e7eb" stroke-width="1"></line><text x="60" y="89.99999999999994" text-anchor="end" font-size="12" fill="#6b7280">£4.4M</text><line x1="70" y1="20" x2="1066" y2="20" stroke="#e5e7eb" stroke-width="1"></line><text x="60" y="24" text-anchor="end" font-size="12" fill="#6b7280">£5.3M</text><text x="70" y="370" text-anchor="middle" font-size="12" fill="#6b7280">0</text><text x="169.60000000000002" y="370" text-anchor="middle" font-size="12" fill="#6b7280">2</text><text x="269.20000000000005" y="370" text-anchor="middle" font-size="12" fill="#6b7280">4</text><text x="368.8" y="370" text-anchor="middle" font-size="12" fill="#6b7280">6</text><text x="468.40000000000003" y="370" text-anchor="middle" font-size="12" fill="#6b7280">8</text><text x="568" y="370" text-anchor="middle" font-size="12" fill="#6b7280">10</text><text x="667.6" y="370" text-anchor="middle" font-size="12" fill="#6b7280">12</text><text x="767.1999999999999" y="370" text-anchor="middle" font-size="12" fill="#6b7280">14</text><text x="866.8000000000001" y="370" text-anchor="middle" font-size="12" fill="#6b7280">16</text><text x="966.4" y="370" text-anchor="middle" font-size="12" fill="#6b7280">18</text><text x="1066" y="370" text-anchor="middle" font-size="12" fill="#6b7280">20</text><text x="568" y="390" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="500">Years</text><text x="-185" y="15" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="500" transform="rotate(-90)">Pension Value (£)</text><path d="M 70 350 L 119.80000000000001 348.13094410969586 L 169.60000000000002 346.205012221853 L 219.4 344.2204973737603 L 269.20000000000005 342.17562432419794 L 319 340.0685495534379 L 368.8 337.89736126324345 L 418.59999999999997 335.66021593388655 L 468.40000000000003 333.35492865309675 L 518.2 330.9795876226375 L 568 328.5320079302384 L 617.8000000000001 326.00993638512057 L 667.6 323.4111880750137 L 717.4 320.7333732521219 L 767.1999999999999 317.97410216864955 L 817 315.13091679829245 L 866.8000000000001 312.20129083623794 L 916.6 309.182493142148 L 966.4 306.07192913270154 L 1016.1999999999999 302.86673111054375 L 1066 299.5640996568281" fill="none" stroke="#85B7EB" stroke-width="2.5"></path><path d="M 70 350 L 119.80000000000001 347.4149756700915 L 169.60000000000002 344.69769586931574 L 219.4 341.84146930384475 L 269.20000000000005 338.8389901732743 L 319 335.68302095570874 L 368.8 332.36550478715105 L 418.59999999999997 328.8782482465872 L 468.40000000000003 325.21264824195254 L 518.2 321.3594188960979 L 568 317.3091377748572 L 617.8000000000001 313.05163138047146 L 667.6 308.57624826562244 L 717.4 303.87192731194136 L 767.1999999999999 298.92692461597477 L 817 293.72888176769334 L 866.8000000000001 288.2649624075085 L 916.6 282.5214425552218 L 966.4 276.4841202810757 L 1016.1999999999999 270.13790603470284 L 1066 263.4669592021429" fill="none" stroke="#97C459" stroke-width="2.5"></path><path d="M 70 350 L 119.80000000000001 346.6858977568648 L 169.60000000000002 343.13227450608775 L 219.4 339.3217192280142 L 269.20000000000005 335.2357284468543 L 319 330.8542965596322 L 368.8 326.15618895022 L 418.59999999999997 321.11846403977864 L 468.40000000000003 315.7165415652662 L 518.2 309.92413430092944 L 568 303.7129749442703 L 617.8000000000001 297.05274783753686 L 667.6 289.91115724623256 L 717.4 282.2532445740311 L 767.1999999999999 274.0417297553188 L 817 265.2366015841442 L 866.8000000000001 255.7949811572007 L 916.6 245.67084875979333 L 966.4 234.8147707518043 L 1016.1999999999999 223.17396784620203 L 1066 210.69163232395627" fill="none" stroke="#EF9F27" stroke-width="2.5"></path><path d="M 70 350 L 119.80000000000001 345.9435055344904 L 169.60000000000002 341.50649494139014 L 219.4 336.6532585607801 L 269.20000000000005 331.3447410858269 L 319 325.5382001702411 L 368.8 319.18706987125984 L 418.59999999999997 312.2400730290374 L 468.40000000000003 304.6414261021703 L 518.2 296.33001982559597 L 568 287.23887298252527 L 617.8000000000001 277.29499584742524 L 667.6 266.41822945137596 L 717.4 254.52117730356167 L 767.1999999999999 241.50811293513584 L 817 227.27436539264488 L 866.8000000000001 211.70529506040165 L 916.6 194.67581571092617 L 966.4 176.04889237775973 L 1016.1999999999999 155.6745171778382 L 1066 133.38895824789898" fill="none" stroke="#7F77DD" stroke-width="2.5"></path><path d="M 70 350 L 119.80000000000001 345.18752588893443 L 169.60000000000002 339.81810398444406 L 219.4 333.8274159315692 L 269.20000000000005 327.1434279038953 L 319 319.68598093250233 L 368.8 311.3655618928127 L 418.59999999999997 302.0823476054727 L 468.40000000000003 291.7249075446924 L 518.2 280.16890654658476 L 568 267.2756026819798 L 617.8000000000001 252.89034512923882 L 667.6 236.84045754049225 L 717.4 218.93325796489492 L 767.1999999999999 198.95387393635534 L 817 176.66251133319787 L 866.8000000000001 151.7915866808079 L 916.6 124.04265461875141 L 966.4 93.08258430430197 L 1016.1999999999999 58.53994065149283 L 1066 20" fill="none" stroke="#F09595" stroke-width="2.5"></path></svg>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #85B7EB;"></div>
+                    <span>Conservative (3%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #97C459;"></div>
+                    <span>Moderate (5%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #EF9F27;"></div>
+                    <span>Balanced (7%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #7F77DD;"></div>
+                    <span>Growth (9%)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #F09595;"></div>
+                    <span>Aggressive (11%)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="controls-title">Adjust your parameters</div>
+            
+            <div class="control-group">
+                <label class="control-label">Monthly contribution</label>
+                <input type="range" min="0" max="3000" value="1000" step="100" id="contribution" class="control-slider">
+                <span class="control-value" id="contribution-display">£1,000</span>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Years until retirement</label>
+                <input type="range" min="5" max="30" value="20" step="1" id="years" class="control-slider">
+                <span class="control-value" id="years-display">20</span>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Starting pot</label>
+                <input type="range" min="0" max="1000000" value="500000" step="10000" id="starting" class="control-slider">
+                <span class="control-value" id="starting-display">£500,000</span>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Important Disclaimer</strong>
+            These projections are for illustrative purposes only and should not be considered financial advice. Actual investment returns will vary and past performance does not guarantee future results. Higher returns typically involve higher risk and volatility. Inflation will reduce the real purchasing power of these amounts. Please consult with a qualified financial adviser before making investment decisions.
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            { name: 'Conservative', rate: 0.03, color: '#85B7EB' },
+            { name: 'Moderate', rate: 0.05, color: '#97C459' },
+            { name: 'Balanced', rate: 0.07, color: '#EF9F27' },
+            { name: 'Growth', rate: 0.09, color: '#7F77DD' },
+            { name: 'Aggressive', rate: 0.11, color: '#F09595' }
+        ];
+
+        function calculateFutureValue(initial, monthlyContribution, annualRate, years) {
+            const monthlyRate = annualRate / 12;
+            const months = years * 12;
+            
+            const futureValueInitial = initial * Math.pow(1 + monthlyRate, months);
+            const futureValueContributions = monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+            
+            return Math.round(futureValueInitial + futureValueContributions);
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-GB', { 
+                style: 'currency', 
+                currency: 'GBP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function formatShort(value) {
+            if (value >= 1000000) {
+                return '£' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '£' + Math.round(value / 1000) + 'k';
+            }
+            return formatCurrency(value);
+        }
+
+        function drawChart(starting, contribution, years) {
+            const svg = document.getElementById('growthChart');
+            const width = svg.clientWidth || 900;
+            const height = 400;
+            const padding = { top: 20, right: 20, bottom: 50, left: 70 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            svg.innerHTML = '';
+
+            // Calculate all data points
+            const allData = scenarios.map(scenario => {
+                const points = [];
+                for (let year = 0; year <= years; year++) {
+                    points.push({
+                        year: year,
+                        value: calculateFutureValue(starting, contribution, scenario.rate, year)
+                    });
+                }
+                return { scenario, points };
+            });
+
+            // Find max value for scaling
+            const maxValue = Math.max(...allData.flatMap(d => d.points.map(p => p.value)));
+            const minValue = Math.min(...allData.flatMap(d => d.points.map(p => p.value)));
+
+            // Scales
+            const xScale = (year) => padding.left + (year / years) * chartWidth;
+            const yScale = (value) => padding.top + chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight;
+
+            // Draw grid lines
+            const numYLines = 5;
+            for (let i = 0; i <= numYLines; i++) {
+                const value = minValue + (maxValue - minValue) * (i / numYLines);
+                const y = yScale(value);
+                
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', padding.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', width - padding.right);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#e5e7eb');
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', padding.left - 10);
+                text.setAttribute('y', y + 4);
+                text.setAttribute('text-anchor', 'end');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('fill', '#6b7280');
+                text.textContent = formatShort(value);
+                svg.appendChild(text);
+            }
+
+            // Draw X axis labels
+            const xSteps = Math.min(years, 10);
+            for (let i = 0; i <= xSteps; i++) {
+                const year = Math.round((years / xSteps) * i);
+                const x = xScale(year);
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', height - padding.bottom + 20);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('fill', '#6b7280');
+                text.textContent = year;
+                svg.appendChild(text);
+            }
+
+            // X axis label
+            const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            xLabel.setAttribute('x', padding.left + chartWidth / 2);
+            xLabel.setAttribute('y', height - 10);
+            xLabel.setAttribute('text-anchor', 'middle');
+            xLabel.setAttribute('font-size', '13');
+            xLabel.setAttribute('fill', '#1a1a1a');
+            xLabel.setAttribute('font-weight', '500');
+            xLabel.textContent = 'Years';
+            svg.appendChild(xLabel);
+
+            // Y axis label
+            const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            yLabel.setAttribute('x', -(padding.top + chartHeight / 2));
+            yLabel.setAttribute('y', 15);
+            yLabel.setAttribute('text-anchor', 'middle');
+            yLabel.setAttribute('font-size', '13');
+            yLabel.setAttribute('fill', '#1a1a1a');
+            yLabel.setAttribute('font-weight', '500');
+            yLabel.setAttribute('transform', 'rotate(-90)');
+            yLabel.textContent = 'Pension Value (£)';
+            svg.appendChild(yLabel);
+
+            // Draw lines
+            allData.forEach(({ scenario, points }) => {
+                const pathData = points.map((p, i) => {
+                    const x = xScale(p.year);
+                    const y = yScale(p.value);
+                    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                }).join(' ');
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', pathData);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', scenario.color);
+                path.setAttribute('stroke-width', '2.5');
+                svg.appendChild(path);
+            });
+        }
+
+        function updateCalculations() {
+            const starting = parseInt(document.getElementById('starting').value);
+            const contribution = parseInt(document.getElementById('contribution').value);
+            const years = parseInt(document.getElementById('years').value);
+            
+            // Update display values
+            document.getElementById('contribution-display').textContent = formatCurrency(contribution);
+            document.getElementById('years-display').textContent = years;
+            document.getElementById('starting-display').textContent = formatCurrency(starting);
+            
+            document.getElementById('display-starting').textContent = formatCurrency(starting);
+            document.getElementById('display-contribution').textContent = formatCurrency(contribution);
+            document.getElementById('display-years').textContent = years + ' years';
+            
+            const totalInvested = starting + (contribution * 12 * years);
+            document.getElementById('display-total-invested').textContent = formatCurrency(totalInvested);
+            
+            // Calculate scenarios
+            scenarios.forEach(scenario => {
+                const finalValue = calculateFutureValue(starting, contribution, scenario.rate, years);
+                const growth = finalValue - totalInvested;
+                
+                const elemId = scenario.name.toLowerCase() + '-value';
+                const growthId = scenario.name.toLowerCase() + '-growth';
+                
+                document.getElementById(elemId).textContent = formatCurrency(finalValue);
+                document.getElementById(growthId).textContent = '+' + formatCurrency(growth) + ' growth';
+            });
+
+            // Redraw chart
+            drawChart(starting, contribution, years);
+        }
+
+        // Event listeners
+        document.getElementById('contribution').addEventListener('input', updateCalculations);
+        document.getElementById('years').addEventListener('input', updateCalculations);
+        document.getElementById('starting').addEventListener('input', updateCalculations);
+
+        // Initial calculation
+        window.addEventListener('load', updateCalculations);
+        window.addEventListener('resize', updateCalculations);
+    </script>
+
+
+</body></html>
